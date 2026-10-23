@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mike · Barcelona i Catalunya</title>
+<meta name="description" content="Impressions de Barcelona i Catalunya, d'en Mike, de Viena.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f3ec; --ink:#1f1b16; --muted:#6b6258; --accent:#b8322a; --gold:#e3b23c; --line:#e4dccf;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#141210; --ink:#efe8dd; --muted:#a59a8c; --accent:#e0574d; --gold:#e8bd52; --line:#2b2621; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink)}
+  body{font-family:Inter,system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  header{max-width:720px;margin:0 auto;padding:72px 20px 40px}
+  .stripe{display:flex;gap:6px;margin-bottom:28px}
+  .stripe span{height:6px;width:28px;border-radius:3px}
+  .stripe span:nth-child(odd){background:var(--gold)}
+  .stripe span:nth-child(even){background:var(--accent)}
+  h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(2.4rem,7vw,4rem);line-height:1.05;margin:0 0 24px;letter-spacing:-.01em}
+  h1 em{font-style:normal;color:var(--accent)}
+  .intro{font-family:Fraunces,Georgia,serif;font-size:clamp(1.15rem,2.6vw,1.4rem);line-height:1.55;margin:0}
+  .sign{margin-top:20px;color:var(--muted);font-size:.95rem}
+  main{max-width:1280px;margin:0 auto;padding:16px 16px 64px}
+  .gallery{columns:3 300px;column-gap:14px}
+  .gallery button{all:unset;display:block;width:100%;margin:0 0 14px;break-inside:avoid;cursor:zoom-in;border-radius:6px;overflow:hidden;background:var(--line)}
+  .gallery button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .gallery img{display:block;width:100%;height:auto;transition:transform .5s ease}
+  .gallery button:hover img{transform:scale(1.03)}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;padding:0 20px 48px}
+  /* lightbox */
+  .lb{position:fixed;inset:0;background:rgba(10,9,8,.94);display:none;align-items:center;justify-content:center;z-index:10}
+  .lb.open{display:flex}
+  .lb img{max-width:94vw;max-height:88vh;border-radius:4px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  .lb .cap{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#d8d0c4;font-size:.9rem;padding:0 60px}
+  .lb button{all:unset;position:absolute;color:#fff;font-size:2rem;cursor:pointer;padding:12px 18px;opacity:.8}
+  .lb button:hover,.lb button:focus-visible{opacity:1}
+  .lb .x{top:6px;right:6px}
+  .lb .prev{left:4px;top:50%;transform:translateY(-50%)}
+  .lb .next{right:4px;top:50%;transform:translateY(-50%)}
+</style>
+</head>
+<body>
+<header>
+  <div class="stripe" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+  <h1>Hola, <em>Barcelona</em>.</h1>
+  <p class="intro">Hola! Em dic Mike, sóc de Viena i fa vint anys que vinc a Catalunya i a Barcelona almenys un cop l'any. És, simplement, una regió preciosa. Properament m'agradaria escriure més sobre aquest meravellós racó del món. Per començar, us deixo només unes quantes impressions. Que ho passeu molt bé!</p>
+  <p class="sign">— Mike</p>
+</header>
+
+<main>
+  <div class="gallery" id="gallery"></div>
+</main>
+
+<footer>© Mike · mike.cat</footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Imatge ampliada">
+  <img id="lbImg" alt="">
+  <div class="cap" id="lbCap"></div>
+  <button class="x" id="lbClose" aria-label="Tanca">✕</button>
+  <button class="prev" id="lbPrev" aria-label="Anterior">‹</button>
+  <button class="next" id="lbNext" aria-label="Següent">›</button>
+</div>
+
+<script>
+  const photos = [
+    "Bàsquet al Palau Blaugrana",
+    "El marcador: Barça contra l'AS Monaco",
+    "L'afició a la grada",
+    "El Palau Blaugrana abans del partit",
+    "Un arbre de Nadal en blau i grana",
+    "El Cat Bar, de nit",
+    "Un visitant inesperat al bar",
+    "Pa amb tomàquet, pebrots i olives",
+    "Pernils penjats en un bar de tapes",
+    "El Cap de Barcelona, al Port Vell",
+    "Capvespre a la platja de la Barceloneta",
+    "Un veler davant de l'Hotel Vela",
+    "La Sagrada Família",
+    "La façana de la Passió",
+    "Una cervesa al sol, en una terrassa",
+    "L'Arc de Triomf",
+    "Passeig de Lluís Companys",
+    "L'Hotel Vela de nit",
+    "Llums i colors",
+    "Barcelona de nit, des de dalt"
+  ];
+  const g = document.getElementById('gallery');
+  photos.forEach((alt, i) => {
+    const n = String(i + 1).padStart(2, '0');
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', alt);
+    b.innerHTML = `<img src="img/${n}.jpg" alt="${alt}" loading="lazy" decoding="async">`;
+    b.onclick = () => open(i);
+    g.appendChild(b);
+  });
+  const lb = document.getElementById('lb'), img = document.getElementById('lbImg'), cap = document.getElementById('lbCap');
+  let cur = 0;
+  function show(i){
+    cur = (i + photos.length) % photos.length;
+    img.src = `img/${String(cur + 1).padStart(2,'0')}.jpg`;
+    img.alt = photos[cur]; cap.textContent = photos[cur];
+  }
+  function open(i){ show(i); lb.classList.add('open'); document.getElementById('lbClose').focus(); }
+  function close(){ lb.classList.remove('open'); }
+  document.getElementById('lbClose').onclick = close;
+  document.getElementById('lbPrev').onclick = () => show(cur - 1);
+  document.getElementById('lbNext').onclick = () => show(cur + 1);
+  lb.onclick = e => { if (e.target === lb) close(); };
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(cur - 1);
+    if (e.key === 'ArrowRight') show(cur + 1);
+  });
+  // swipe on phones
+  let x0 = null;
+  lb.addEventListener('touchstart', e => x0 = e.touches[0].clientX, {passive:true});
+  lb.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+</script>
+</body>
+</html>
